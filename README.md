@@ -1,66 +1,22 @@
-## Foundry
+# Secure Vault Implementation (Foundry)
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A Solidity smart contract demonstrating the **Checks-Effects-Interactions** pattern to prevent Reentrancy attacks.
 
-Foundry consists of:
+## Overview
+This project was built to deeply understand how reentrancy vulnerabilities work at the EVM level. It includes a secure Vault contract where users can deposit and withdraw ETH.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## The Vulnerability
+The original implementation updated the user's balance *after* sending ETH, making it vulnerable to a classic reentrancy exploit (similar to the DAO hack). 
 
-## Documentation
+## The Fix
+The `withdraw` function follows the strict Checks-Effects-Interactions pattern. The user's balance is decremented *before* the external call is made, preventing any recursive reentrancy.
 
-https://book.getfoundry.sh/
+## Tests
+Includes a comprehensive Foundry test suite covering:
+- Deposits
+- Withdrawals
+- Reverts on insufficient balance
 
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+Run tests:
+```bash
+forge test
